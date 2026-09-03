@@ -1,44 +1,68 @@
 import os
 from dotenv import load_dotenv
-from langchain_community.document_loaders import TextLoader
+from langchain_community.document_loaders import (
+    TextLoader,
+    PyPDFLoader,
+    Docx2txtLoader
+)
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-# Load environment variables from .env file
+
 load_dotenv()
 
-def load_and_split_document(file_path: str):
-    """
-    Reads a text document and splits it into smaller chunks for processing.
-    """
-    print(f"📖 Reading document from: {file_path}...")
+DATA_DIR = "data"
+
+def load_single_document(file_path: str):
+    """Loads a single file depending on its extension."""
+    if file_path.endswith(".txt"):
+        loader = TextLoader(file_path, encoding="utf-8")
+        return loader.load()
+    elif file_path.endswith(".pdf"):
+        loader = PyPDFLoader(file_path)
+        return loader.load()
+    elif file_path.endswith(".docx"):
+        loader = Docx2txtLoader(file_path)
+        return loader.load()
+    else:
+        print(f"Skipping unsupported file: {file_path}")
+        return []
+
+def load_all_documents(folder_path: str = DATA_DIR):
+    """Scans the directory and loads all supported documents."""
+    all_documents = []
     
-    # 1. Load the text document
-    loader = TextLoader(file_path, encoding='utf-8')
-    documents = loader.load()
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+        print(f"Created folder: {folder_path}. Please place your files inside it.")
+        return []
+
+    files = os.listdir(folder_path)
+    print(f"Found {len(files)} files in '{folder_path}'.")
+
+    for file_name in files:
+        full_path = os.path.join(folder_path, file_name)
+        if os.path.isfile(full_path):
+            print(f"Loading: {file_name}...")
+            docs = load_single_document(full_path)
+            all_documents.extend(docs)
+
+    return all_documents
+
+def process_and_split_documents():
+    """Loads all documents and splits them into clean chunks."""
+    documents = load_all_documents(DATA_DIR)
     
-    # 2. Configure the text splitter (Chunk size: 500 characters, Overlap: 50 characters)
+    if not documents:
+        print("No documents found to process.")
+        return []
+
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
         chunk_overlap=50
     )
-    
-    # 3. Split the document into chunks
     chunks = text_splitter.split_documents(documents)
-    
-    print(f"✅ Successfully split the document into {len(chunks)} chunks!\n")
-    
-    # Display the first two chunks as a preview
-    for i, chunk in enumerate(chunks[:2]):
-        print(f"--- Chunk {i+1} ---")
-        print(chunk.page_content)
-        print("-" * 25)
-        
+    print(f"\nSuccessfully generated {len(chunks)} chunks from all files.")
     return chunks
 
 if __name__ == "__main__":
-    sample_file = os.path.join("data", "sample.txt")
-    
-    if os.path.exists(sample_file):
-        load_and_split_document(sample_file)
-    else:
-        print(f"⚠️ File not found! Please create {sample_file}")
+    process_and_split_documents()

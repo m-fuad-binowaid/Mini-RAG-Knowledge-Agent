@@ -42,5 +42,5 @@ def search_knowledge_base(user_query: str):
 
 if __name__ == "__main__":
     # Test query
-    sample_question = "When was Aramco established?"
-    search_knowledge_base(sample_question)
+    sample_question = "What ERP systems has Faez worked with?"
+    search_knowledge_base(sample_question)  

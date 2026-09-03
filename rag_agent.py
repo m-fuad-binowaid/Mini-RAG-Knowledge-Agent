@@ -65,5 +65,5 @@ def run_rag_pipeline(query: str):
     print("-" * 50)
 
 if __name__ == "__main__":
-    test_question = "What is the capital of Franc?"
+    test_question = " based on the Resume, What is the phone number of Faez and what is his cuurent job?"
     run_rag_pipeline(test_question)
