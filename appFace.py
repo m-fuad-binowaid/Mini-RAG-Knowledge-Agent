@@ -326,3 +326,12 @@ if user_input := st.chat_input("Ask anything from your documents..."):
             "sources": sources_data
         })
         st.rerun()
+
+
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+import os
+import streamlit as st
+# ... rest of your code continues below
