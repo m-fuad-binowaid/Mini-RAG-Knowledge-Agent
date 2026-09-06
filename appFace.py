@@ -4,7 +4,6 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 import os
 import streamlit as st
-from PIL import Image
 from dotenv import load_dotenv
 
 from langchain_chroma import Chroma
@@ -18,16 +17,13 @@ load_dotenv()
 
 DATA_DIR = "data"
 DB_DIR = "./chromadb_store"
-ICON_PATH = os.path.join(os.path.dirname(__file__), "icon.png")
 
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
-app_icon = Image.open(ICON_PATH) if os.path.exists(ICON_PATH) else "🤖"
-
 st.set_page_config(
     page_title="Knowledge Agent",
-    page_icon=app_icon,
+    page_icon="🧠",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
