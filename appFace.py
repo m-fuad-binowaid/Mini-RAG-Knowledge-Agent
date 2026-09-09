@@ -23,7 +23,7 @@ if not os.path.exists(DATA_DIR):
 
 st.set_page_config(
     page_title="Knowledge Agent",
-    page_icon="🧠",
+    page_icon="",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
